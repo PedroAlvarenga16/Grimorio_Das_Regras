@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#1a1008;--parchment:#f4ead0;--parchment2:#ede0c0;--parchment3:#e6d5a8;--gold:#c9952a;--gold2:#e8b84b;--gold3:#f5d070;--blood:#7a1a1a;--blood2:#a02020;}
+html,body{background:transparent;font-family:'Crimson Text',serif;}
+.grim-wrap{background:linear-gradient(160deg,#1a1008 0%,#0f0a04 40%,#1a1008 100%);min-height:100vh;padding:0;position:relative;overflow:hidden;}
+.grim-wrap::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(201,149,42,0.03) 60px,rgba(201,149,42,0.03) 61px),repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(201,149,42,0.03) 60px,rgba(201,149,42,0.03) 61px);pointer-events:none;z-index:0;}
+.grim-wrap::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(201,149,42,0.07),transparent 60%),radial-gradient(ellipse 60% 40% at 50% 100%,rgba(122,26,26,0.12),transparent 60%);pointer-events:none;z-index:0;}
+.grim-inner{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:0 0 4rem;}
+.cover{text-align:center;padding:3rem 2rem 2rem;}
+.cover-rune{font-family:'Cinzel',serif;font-size:10px;letter-spacing:8px;color:var(--gold);opacity:.5;text-transform:uppercase;margin-bottom:1.5rem;}
+.cover-emblem{width:90px;height:90px;margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center;}
+.cover-emblem svg{width:90px;height:90px;}
+.cover-title{font-family:'Cinzel Decorative',serif;font-size:clamp(18px,4vw,28px);font-weight:900;color:var(--gold2);letter-spacing:3px;line-height:1.2;text-shadow:0 0 40px rgba(201,149,42,0.4),0 2px 8px rgba(0,0,0,0.8);margin-bottom:.5rem;}
+.cover-sub{font-family:'Cinzel',serif;font-size:12px;letter-spacing:5px;color:var(--gold);opacity:.6;margin-bottom:1.5rem;}
+.cover-divider{display:flex;align-items:center;justify-content:center;gap:12px;margin:1rem auto;max-width:400px;}
+.cover-divider-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.4;}
+.cover-divider-sym{color:var(--gold);font-size:14px;opacity:.7;letter-spacing:4px;}
+.cover-quote{font-style:italic;font-size:16px;color:var(--parchment3);opacity:.7;max-width:440px;margin:0 auto;line-height:1.7;}
+.nav-wrap{padding:0 1.5rem 1.5rem;position:sticky;top:0;z-index:20;background:linear-gradient(to bottom,#0f0a04 60%,transparent);padding-top:1rem;}
+.nav{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;background:rgba(10,6,2,0.7);border:1px solid rgba(201,149,42,0.15);border-radius:4px;padding:6px;backdrop-filter:blur(8px);}
+.nav-btn{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;padding:8px 16px;border:1px solid transparent;border-radius:3px;background:transparent;color:rgba(201,149,42,0.5);cursor:pointer;transition:all .2s;text-transform:uppercase;}
+.nav-btn:hover{color:var(--gold2);border-color:rgba(201,149,42,0.3);}
+.nav-btn.active{color:var(--ink);background:linear-gradient(135deg,var(--gold),var(--gold2));border-color:var(--gold2);}
+.chapter{display:none;padding:0 1.5rem;animation:fadeIn .4s ease;}
+.chapter.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ch-head{text-align:center;padding:2rem 0 1.5rem;}
+.ch-num{font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:var(--gold);opacity:.5;text-transform:uppercase;margin-bottom:.5rem;}
+.ch-title{font-family:'Cinzel Decorative',serif;font-size:clamp(16px,3vw,22px);font-weight:700;color:var(--gold2);text-shadow:0 0 30px rgba(201,149,42,0.3);margin-bottom:1rem;}
+.ch-ornament{display:flex;align-items:center;justify-content:center;gap:10px;}
+.ch-ornament-line{height:1px;width:80px;background:linear-gradient(90deg,transparent,rgba(201,149,42,0.5));}
+.ch-ornament-line.rev{background:linear-gradient(90deg,rgba(201,149,42,0.5),transparent);}
+.ch-ornament-sym{color:var(--gold);font-size:12px;opacity:.6;}
+.scroll{background:linear-gradient(160deg,rgba(244,234,208,0.07),rgba(230,213,168,0.04));border:1px solid rgba(201,149,42,0.2);border-radius:2px;padding:1.25rem 1.5rem;margin-bottom:1rem;position:relative;}
+.scroll::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(to bottom,var(--gold),var(--blood),transparent);opacity:.5;border-radius:2px 0 0 2px;}
+.scroll-title{font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--gold2);letter-spacing:2px;margin-bottom:.75rem;display:flex;align-items:center;gap:10px;text-transform:uppercase;}
+.scroll-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(201,149,42,0.3),transparent);}
+.scroll p{font-size:16px;line-height:1.85;color:var(--parchment2);opacity:.85;}
+.scroll p+p{margin-top:.6rem;}
+.arcane-quote{text-align:center;padding:1.5rem 2rem;margin:1rem 0;border-top:1px solid rgba(201,149,42,0.15);border-bottom:1px solid rgba(201,149,42,0.15);}
+.arcane-quote p{font-style:italic;font-size:18px;color:var(--parchment3);opacity:.8;line-height:1.7;}
+.arcane-quote small{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--gold);opacity:.5;display:block;margin-top:.5rem;}
+.tag{display:inline-block;font-family:'Cinzel',serif;font-size:10px;letter-spacing:1px;padding:3px 10px;border-radius:2px;text-transform:uppercase;border:1px solid;}
+.tag-gold{background:rgba(201,149,42,0.12);border-color:rgba(201,149,42,0.4);color:var(--gold2);}
+.tag-blood{background:rgba(122,26,26,0.2);border-color:rgba(160,32,32,0.4);color:#e08080;}
+.tag-ash{background:rgba(80,70,50,0.3);border-color:rgba(120,100,60,0.4);color:rgba(244,234,208,0.6);}
+.pericia-wrap{margin:1rem 0;}
+.pericia-lvl{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.p-lvl-tag{font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:var(--gold);opacity:.6;width:52px;text-align:right;flex-shrink:0;}
+.p-nodes{display:flex;gap:8px;align-items:center;flex:1;}
+.p-node{flex:1;border:1px solid rgba(201,149,42,0.25);border-radius:2px;padding:10px 12px;text-align:center;transition:all .2s;cursor:default;position:relative;overflow:hidden;}
+.p-node::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(201,149,42,0.06),transparent);}
+.p-node-name{font-family:'Cinzel',serif;font-size:12px;color:var(--gold2);margin-bottom:3px;}
+.p-node-dice{font-size:11px;color:rgba(244,234,208,0.5);font-style:italic;}
+.p-node:hover{border-color:rgba(201,149,42,0.6);background:rgba(201,149,42,0.05);}
+.p-node.lv1{border-color:rgba(201,149,42,0.2);}
+.p-node.lv2{border-color:rgba(201,149,42,0.35);}
+.p-node.lv3{border-color:rgba(201,149,42,0.55);}
+.p-node.lv4{border-color:rgba(201,149,42,0.75);}
+.p-node.lv5{border-color:var(--gold2);background:rgba(201,149,42,0.1);}
+.p-node.lv5 .p-node-name{color:var(--gold3);text-shadow:0 0 10px rgba(201,149,42,0.5);}
+.strike-grid{display:flex;flex-direction:column;gap:8px;margin:1rem 0;}
+.strike-row{display:flex;align-items:center;gap:10px;}
+.s-lbl{font-family:'Cinzel',serif;font-size:10px;color:rgba(201,149,42,0.5);width:60px;text-align:right;flex-shrink:0;letter-spacing:1px;}
+.s-track{flex:1;height:24px;border-radius:2px;border:1px solid rgba(201,149,42,0.15);background:rgba(10,6,2,0.5);overflow:hidden;}
+.s-fill{height:100%;display:flex;align-items:center;padding-left:8px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:1px;transition:width .4s;}
+.s-mod{font-family:'Cinzel',serif;font-size:12px;font-weight:700;width:30px;flex-shrink:0;text-align:left;}
+.s1{background:linear-gradient(90deg,rgba(60,180,100,0.5),rgba(60,180,100,0.2));color:rgba(150,240,150,0.9);width:16.7%;}
+.s2{background:linear-gradient(90deg,rgba(180,160,40,0.5),rgba(180,160,40,0.2));color:rgba(240,220,100,0.9);width:33.3%;}
+.s3{background:linear-gradient(90deg,rgba(220,130,20,0.6),rgba(220,130,20,0.2));color:rgba(255,180,80,0.9);width:50%;}
+.s4{background:linear-gradient(90deg,rgba(200,60,30,0.6),rgba(200,60,30,0.2));color:rgba(255,130,100,0.9);width:66.6%;}
+.s5{background:linear-gradient(90deg,rgba(160,20,20,0.7),rgba(160,20,20,0.2));color:rgba(255,100,80,0.9);width:83.3%;}
+.s6{background:linear-gradient(90deg,rgba(100,0,0,0.9),rgba(120,10,10,0.6));color:rgba(255,180,180,0.95);width:100%;}
+.s1-c{color:#7be89a;}.s2-c{color:#e8d040;}.s3-c{color:#f09030;}.s4-c{color:#e84040;}.s5-c{color:#c82020;}.s6-c{color:#ff8080;}
+.dmg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:1rem 0;}
+.dmg-card{border:1px solid rgba(201,149,42,0.2);border-radius:2px;padding:1rem;background:rgba(10,6,2,0.4);position:relative;}
+.dmg-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;border-radius:0 0 2px 2px;opacity:.3;}
+.dmg-card.fisico::after{background:linear-gradient(90deg,var(--blood),transparent);}
+.dmg-card.balistico::after{background:linear-gradient(90deg,var(--gold),transparent);}
+.dmg-card.psico::after{background:linear-gradient(90deg,#6030a0,transparent);}
+.dmg-cat{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+.dmg-cat.c-fis{color:var(--blood2);}.dmg-cat.c-bal{color:var(--gold);}.dmg-cat.c-psi{color:#a060d0;}
+.dmg-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(201,149,42,0.08);font-size:14px;}
+.dmg-row:last-child{border-bottom:none;padding-bottom:0;}
+.dmg-name{color:rgba(244,234,208,0.75);}
+.dmg-val{font-family:'Cinzel',serif;font-size:11px;color:var(--gold2);letter-spacing:1px;}
+.dmg-note{font-size:12px;color:rgba(244,234,208,0.4);font-style:italic;margin-top:8px;line-height:1.5;}
+.luck-section{margin:1rem 0;}
+.luck-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+.luck-name{font-family:'Cinzel',serif;font-size:12px;color:var(--gold);letter-spacing:2px;}
+.luck-val{font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:var(--gold2);}
+.luck-track{height:32px;border-radius:2px;border:1px solid rgba(201,149,42,0.2);background:rgba(10,6,2,0.6);overflow:hidden;position:relative;}
+.luck-fill{height:100%;transition:width .5s cubic-bezier(.4,0,.2,1),background .5s;display:flex;align-items:center;justify-content:flex-end;padding-right:12px;}
+.luck-fill-txt{font-family:'Cinzel',serif;font-size:11px;font-weight:700;}
+.luck-safe{background:linear-gradient(90deg,rgba(40,140,80,0.7),rgba(60,180,100,0.5));}
+.luck-safe .luck-fill-txt{color:rgba(150,255,180,0.9);}
+.luck-warn{background:linear-gradient(90deg,rgba(180,120,20,0.7),rgba(220,160,40,0.5));}
+.luck-warn .luck-fill-txt{color:rgba(255,220,100,0.9);}
+.luck-danger{background:linear-gradient(90deg,rgba(140,20,20,0.8),rgba(180,30,30,0.6));}
+.luck-danger .luck-fill-txt{color:rgba(255,150,150,0.95);}
+.luck-marker{position:absolute;left:18%;top:0;bottom:0;width:1px;background:rgba(200,50,50,0.6);}
+.luck-marker::after{content:'perigo';position:absolute;left:4px;top:50%;transform:translateY(-50%);font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;color:rgba(200,80,80,0.8);text-transform:uppercase;}
+.luck-controls{margin-top:1rem;display:flex;flex-direction:column;gap:10px;}
+.ctrl-row{display:flex;align-items:center;gap:12px;}
+.ctrl-lbl{font-family:'Cinzel',serif;font-size:11px;color:rgba(201,149,42,0.6);min-width:120px;letter-spacing:1px;}
+input[type=range]{-webkit-appearance:none;flex:1;height:4px;background:linear-gradient(90deg,var(--gold),rgba(201,149,42,0.2));border-radius:2px;outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:2px;background:var(--gold2);cursor:pointer;box-shadow:0 0 8px rgba(201,149,42,0.5);}
+.dying-track{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:1.5rem 0;}
+.d-box{border:1px solid rgba(201,149,42,0.25);border-radius:2px;padding:12px 14px;text-align:center;min-width:80px;background:rgba(10,6,2,0.5);transition:all .2s;}
+.d-box.kill{border-color:rgba(160,30,30,0.6);background:rgba(80,10,10,0.4);}
+.d-round{font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:rgba(201,149,42,0.5);margin-bottom:4px;}
+.d-state{font-size:15px;color:rgba(244,234,208,0.7);line-height:1.3;}
+.d-box.kill .d-state{color:rgba(255,120,120,0.9);}
+.d-arrow{color:rgba(201,149,42,0.25);font-size:16px;}
+.rule-hl{display:flex;gap:12px;background:rgba(122,26,26,0.12);border:1px solid rgba(160,32,32,0.25);border-radius:2px;padding:1rem 1.25rem;margin:1rem 0;}
+.rule-hl-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.rule-hl-title{font-family:'Cinzel',serif;font-size:12px;letter-spacing:2px;color:#e08080;margin-bottom:4px;text-transform:uppercase;}
+.rule-hl p{font-size:15px;color:rgba(244,234,208,0.75);line-height:1.75;}
+.chapter-end{text-align:center;padding:2rem 0 1rem;}
+.chapter-end .ornament-line{height:1px;max-width:200px;margin:0 auto 1rem;background:linear-gradient(90deg,transparent,rgba(201,149,42,0.3),transparent);}
+.chapter-end p{font-style:italic;font-size:13px;color:rgba(201,149,42,0.4);letter-spacing:2px;}
+
+/* ══ PERSONAGEM ══ */
+.char-name-input{font-family:'Cinzel Decorative',serif;font-size:20px;background:transparent;border:none;border-bottom:1px solid rgba(201,149,42,0.3);color:var(--gold2);text-align:center;width:100%;padding:8px 0;outline:none;letter-spacing:2px;}
+.char-name-input::placeholder{color:rgba(201,149,42,0.25);font-size:16px;}
+.char-name-input:focus{border-bottom-color:var(--gold2);}
+
+/* ══ STRIKES SEÇÃO ══ */
+.strikes-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;}
+.strikes-counter-big{font-family:'Cinzel Decorative',serif;font-size:32px;color:var(--gold2);letter-spacing:2px;line-height:1;}
+.strikes-label{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:rgba(201,149,42,0.5);text-transform:uppercase;margin-top:2px;}
+.strikes-modifier-box{text-align:right;}
+.strikes-mod-val{font-family:'Cinzel Decorative',serif;font-size:28px;color:#e08080;letter-spacing:2px;}
+.strikes-mod-label{font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:rgba(224,128,128,0.5);text-transform:uppercase;}
+.strikes-mod-label.safe{color:rgba(120,200,120,0.5);}
+.strikes-mod-val.safe{color:rgba(120,200,120,0.8);}
+
+.strike-pip-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem;}
+.strike-pip{
+  width:28px;height:28px;border-radius:2px;
+  border:1px solid rgba(201,149,42,0.25);
+  background:rgba(10,6,2,0.5);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;
+  transition:all .2s;
+  cursor:default;
+}
+.strike-pip.filled{background:rgba(160,32,32,0.4);border-color:rgba(200,60,60,0.6);}
+.strike-pip.filled.three-mark{border-color:rgba(255,80,80,0.9);box-shadow:0 0 8px rgba(200,40,40,0.4);}
+
+.strike-wound-list{display:flex;flex-direction:column;gap:8px;margin:1rem 0;}
+.strike-wound-item{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(122,26,26,0.1);
+  border:1px solid rgba(160,32,32,0.2);
+  border-radius:2px;
+  padding:8px 12px;
+}
+.wound-count{
+  font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;
+  color:#e08080;flex-shrink:0;min-width:20px;text-align:center;
+}
+.wound-count-badge{
+  background:rgba(160,32,32,0.3);border:1px solid rgba(200,60,60,0.4);
+  border-radius:2px;padding:2px 7px;
+  font-family:'Cinzel',serif;font-size:10px;color:#e08080;
+  flex-shrink:0;
+}
+.wound-desc{font-size:14px;color:rgba(244,234,208,0.75);flex:1;line-height:1.4;}
+.wound-remove{
+  background:transparent;border:1px solid rgba(160,32,32,0.3);border-radius:2px;
+  color:rgba(200,80,80,0.6);font-size:14px;cursor:pointer;
+  width:26px;height:26px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all .2s;
+}
+.wound-remove:hover{border-color:rgba(200,80,80,0.7);color:#e08080;background:rgba(122,26,26,0.2);}
+
+.add-strike-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:.75rem;}
+.strike-qty-input{
+  font-family:'Cinzel',serif;font-size:13px;
+  background:rgba(10,6,2,0.6);border:1px solid rgba(201,149,42,0.3);
+  color:var(--gold2);padding:8px 10px;border-radius:2px;
+  width:60px;outline:none;text-align:center;
+}
+.strike-qty-input:focus{border-color:var(--gold2);}
+.strike-desc-input{
+  font-family:'Crimson Text',serif;font-size:14px;
+  background:rgba(10,6,2,0.6);border:1px solid rgba(201,149,42,0.3);
+  color:var(--parchment2);padding:8px 12px;border-radius:2px;
+  flex:1;outline:none;min-width:120px;
+}
+.strike-desc-input::placeholder{color:rgba(201,149,42,0.25);}
+.strike-desc-input:focus{border-color:rgba(201,149,42,0.6);}
+
+/* Modificador no resultado do dado */
+.penalty-note{
+  font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;
+  color:#e08080;margin-top:6px;min-height:18px;
+}
+
+/* ══ SKILLS ══ */
+.skill-list{display:flex;flex-direction:column;gap:10px;margin:1rem 0;}
+.skill-card{border:1px solid rgba(201,149,42,0.25);border-radius:2px;padding:1rem 1.25rem;background:rgba(10,6,2,0.4);position:relative;overflow:hidden;}
+.skill-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;opacity:.6;border-radius:2px 0 0 2px;}
+.skill-lv1::before{background:rgba(201,149,42,0.4);}
+.skill-lv2::before{background:rgba(201,149,42,0.6);}
+.skill-lv3::before{background:rgba(201,149,42,0.8);}
+.skill-lv4::before{background:var(--gold);}
+.skill-lv5::before{background:var(--gold2);}
+.skill-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.skill-card-name{font-family:'Cinzel',serif;font-size:14px;color:var(--gold2);letter-spacing:2px;}
+.skill-card-level{font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:rgba(201,149,42,0.5);text-transform:uppercase;}
+.skill-dice-row{display:flex;gap:6px;align-items:center;margin-bottom:10px;flex-wrap:wrap;}
+.die-face{width:36px;height:36px;border:1px solid rgba(201,149,42,0.3);border-radius:4px;background:rgba(10,6,2,0.6);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:var(--gold2);transition:all .3s;}
+.die-face.highlight{border-color:var(--gold2);background:rgba(201,149,42,0.15);color:var(--gold3);box-shadow:0 0 12px rgba(201,149,42,0.4);}
+.die-face.critical{border-color:#f5d070;background:rgba(245,208,112,0.2);color:#f5d070;box-shadow:0 0 18px rgba(245,208,112,0.6);animation:pulse-gold 1s ease infinite alternate;}
+@keyframes pulse-gold{from{box-shadow:0 0 8px rgba(245,208,112,0.4)}to{box-shadow:0 0 24px rgba(245,208,112,0.9)}}
+.die-face.rolling{animation:spin-die 0.08s ease infinite;}
+@keyframes spin-die{0%{transform:scale(1.1) rotate(-3deg)}50%{transform:scale(0.95) rotate(3deg)}100%{transform:scale(1.1) rotate(-3deg)}}
+.roll-btn{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;border:1px solid rgba(201,149,42,0.4);background:rgba(201,149,42,0.08);color:var(--gold2);padding:9px 20px;border-radius:2px;cursor:pointer;text-transform:uppercase;transition:all .2s;}
+.roll-btn:hover{background:rgba(201,149,42,0.18);border-color:rgba(201,149,42,0.7);}
+.roll-btn:disabled{opacity:.4;cursor:not-allowed;}
+.skill-result{font-family:'Cinzel',serif;font-size:12px;letter-spacing:2px;margin-top:8px;min-height:20px;text-transform:uppercase;transition:all .3s;}
+.result-normal{color:rgba(201,149,42,0.6);}
+.result-good{color:var(--gold2);}
+.result-critical{color:var(--gold3);text-shadow:0 0 10px rgba(245,208,112,0.6);}
+.result-double{color:#f5d070;text-shadow:0 0 14px rgba(245,208,112,0.8);}
+.xp-note{font-size:13px;color:rgba(244,234,208,0.4);font-style:italic;margin-top:.5rem;line-height:1.5;}
+.lvl-badge{display:inline-block;font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;padding:2px 8px;border-radius:2px;text-transform:uppercase;background:rgba(201,149,42,0.15);border:1px solid rgba(201,149,42,0.3);color:var(--gold);}
+.lvl-badge.max{background:rgba(245,208,112,0.2);border-color:var(--gold2);color:var(--gold3);}
+
+/* ══ MOCHILA ══ */
+.bag-grid{display:flex;flex-direction:column;gap:8px;margin:1rem 0;}
+.bag-item{display:flex;align-items:center;gap:10px;background:rgba(10,6,2,0.4);border:1px solid rgba(201,149,42,0.15);border-radius:2px;padding:8px 12px;}
+.bag-item-num{font-family:'Cinzel',serif;font-size:10px;color:rgba(201,149,42,0.4);flex-shrink:0;width:20px;}
+.bag-item-name{font-size:15px;color:rgba(244,234,208,0.8);flex:1;}
+.bag-remove{background:transparent;border:1px solid rgba(201,149,42,0.2);border-radius:2px;color:rgba(201,149,42,0.4);font-size:14px;cursor:pointer;width:26px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.bag-remove:hover{border-color:rgba(201,149,42,0.6);color:var(--gold);background:rgba(201,149,42,0.08);}
+.bag-empty{font-style:italic;font-size:14px;color:rgba(201,149,42,0.3);text-align:center;padding:1rem 0;}
+.add-bag-row{display:flex;gap:8px;margin-top:.75rem;}
+.bag-input{font-family:'Crimson Text',serif;font-size:14px;background:rgba(10,6,2,0.6);border:1px solid rgba(201,149,42,0.3);color:var(--parchment2);padding:8px 12px;border-radius:2px;flex:1;outline:none;}
+.bag-input::placeholder{color:rgba(201,149,42,0.25);}
+.bag-input:focus{border-color:rgba(201,149,42,0.6);}
+
+/* Modais */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.hidden{display:none;}
+.modal-box{background:linear-gradient(160deg,#1a1008,#0f0a04);border:1px solid rgba(201,149,42,0.4);border-radius:4px;padding:2rem;max-width:420px;width:100%;position:relative;box-shadow:0 0 60px rgba(201,149,42,0.1);}
+.modal-title{font-family:'Cinzel Decorative',serif;font-size:18px;color:var(--gold2);text-align:center;margin-bottom:.5rem;letter-spacing:2px;}
+.modal-sub{font-family:'Cinzel',serif;font-size:11px;color:rgba(201,149,42,0.5);text-align:center;letter-spacing:3px;margin-bottom:1.5rem;text-transform:uppercase;}
+.modal-critical-star{text-align:center;font-size:28px;margin-bottom:1rem;animation:pulse-gold 1s ease infinite alternate;}
+.modal-input{font-family:'Cinzel',serif;font-size:15px;letter-spacing:2px;background:rgba(10,6,2,0.7);border:1px solid rgba(201,149,42,0.4);color:var(--gold2);padding:12px 16px;border-radius:2px;width:100%;outline:none;text-transform:uppercase;margin-bottom:1rem;}
+.modal-input::placeholder{color:rgba(201,149,42,0.25);text-transform:none;letter-spacing:1px;}
+.modal-input:focus{border-color:var(--gold2);}
+.modal-btns{display:flex;gap:8px;}
+.modal-btn-confirm{flex:1;font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;color:var(--ink);padding:12px;border-radius:2px;cursor:pointer;text-transform:uppercase;font-weight:700;transition:opacity .2s;}
+.modal-btn-confirm:hover{opacity:.85;}
+.modal-btn-cancel{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;background:transparent;border:1px solid rgba(201,149,42,0.25);color:rgba(201,149,42,0.5);padding:12px 20px;border-radius:2px;cursor:pointer;text-transform:uppercase;transition:all .2s;}
+.modal-btn-cancel:hover{border-color:rgba(201,149,42,0.5);color:var(--gold);}
+.modal-upgrade-badge{display:block;margin:0 auto 1rem;font-family:'Cinzel',serif;font-size:22px;color:var(--gold3);text-align:center;letter-spacing:4px;}
+.modal-upgrade-text{font-size:16px;color:rgba(244,234,208,0.75);text-align:center;line-height:1.8;margin-bottom:1.5rem;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(10,6,2,0.95);border:1px solid rgba(201,149,42,0.4);border-radius:3px;padding:10px 24px;font-family:'Cinzel',serif;font-size:12px;letter-spacing:2px;color:var(--gold2);z-index:200;text-align:center;opacity:0;transition:opacity .3s;pointer-events:none;}
+.toast.show{opacity:1;}
+.add-btn{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;border:1px solid rgba(201,149,42,0.4);background:rgba(201,149,42,0.08);color:var(--gold2);padding:9px 18px;border-radius:2px;cursor:pointer;text-transform:uppercase;transition:all .2s;white-space:nowrap;}
+.add-btn:hover{background:rgba(201,149,42,0.18);border-color:rgba(201,149,42,0.7);}
+</style>
+</head>
+<body>
+<div class="grim-wrap">
+<div class="grim-inner">
+<h2 class="sr-only">Grimório LDL II — Ficha interativa de personagem</h2>
+
+<div class="cover">
+  <p class="cover-rune">Codex Arcanus ✦ LDL II ✦ Anno Obscura</p>
+  <div class="cover-emblem">
+    <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="45,5 52,33 81,33 58,51 66,80 45,63 24,80 32,51 9,33 38,33" stroke="rgba(201,149,42,0.7)" stroke-width="1" fill="rgba(201,149,42,0.05)"/>
+      <circle cx="45" cy="45" r="18" stroke="rgba(201,149,42,0.3)" stroke-width="0.5" fill="none"/>
+      <circle cx="45" cy="45" r="4" fill="rgba(201,149,42,0.5)"/>
+      <line x1="45" y1="27" x2="45" y2="63" stroke="rgba(201,149,42,0.25)" stroke-width="0.5"/>
+      <line x1="27" y1="45" x2="63" y2="45" stroke="rgba(201,149,42,0.25)" stroke-width="0.5"/>
+    </svg>
+  </div>
+  <h1 class="cover-title">O Grimório das Regras</h1>
+  <p class="cover-sub">Sistema LDL II — Regras de Campanha</p>
+  <div class="cover-divider">
+    <div class="cover-divider-line"></div>
+    <span class="cover-divider-sym">✦ ✦ ✦</span>
+    <div class="cover-divider-line"></div>
+  </div>
+  <p class="cover-quote">"Qualquer um com um único dado de seis faces pode jogar.<br>O resto — é destino."</p>
+</div>
+
+<div class="nav-wrap">
+  <div class="nav">
+    <button class="nav-btn active" onclick="show('intro',this)">Introdução</button>
+    <button class="nav-btn" onclick="show('pericias',this)">Perícias</button>
+    <button class="nav-btn" onclick="show('strikes',this)">Strikes & Dano</button>
+    <button class="nav-btn" onclick="show('sorte',this)">Sorte</button>
+    <button class="nav-btn" onclick="show('morte',this)">Morte</button>
+    <button class="nav-btn" onclick="show('personagem',this)">Personagem</button>
+  </div>
+</div>
+
+<!-- ══ INTRO ══ -->
+<div id="intro" class="chapter active">
+  <div class="ch-head"><p class="ch-num">Capítulo I</p><h2 class="ch-title">Fundamentos do Sistema</h2><div class="ch-ornament"><div class="ch-ornament-line rev"></div><span class="ch-ornament-sym">⬟</span><div class="ch-ornament-line"></div></div></div>
+  <div class="arcane-quote"><p>"Um sistema forjado para ser simples — mas não menor.<br>O dado fala. O mestre julga. A história decide."</p></div>
+  <div class="scroll"><div class="scroll-title">O Dado Universal</div><p>Todos os testes utilizam <span class="tag tag-gold">1d6</span>. Conforme a campanha avança e as perícias evoluem, mais dados são rolados — valendo sempre o resultado mais alto.</p><p>Basta um único dado de seis lados para criar um personagem e jogar uma sessão completa.</p></div>
+  <div class="scroll"><div class="scroll-title">Ação e Reação</div><p>Todo teste de ação exige um teste de reação quando o alvo for um oponente vivo.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:1rem;"><span class="tag tag-gold">Oponente vivo → DT = dado de resistência do inimigo</span><span class="tag tag-ash">Objeto inativo → DT = resultado maior que 3</span></div><p style="margin-top:.75rem;font-size:14px;color:rgba(244,234,208,0.5);font-style:italic;">Em empate: vence quem tiver a perícia de maior nível. Persistindo o empate — vence quem executou a ação.</p></div>
+  <div class="scroll"><div class="scroll-title">O Papel do Mestre</div><p>70% dos testes são ambíguos. Cabe ao mestre definir o mais justo em cada momento.</p></div>
+  <div class="chapter-end"><div class="ornament-line"></div><p>✦ Que o dado nunca mente — apenas revela ✦</p></div>
+</div>
+
+<!-- ══ PERICIAS ══ -->
+<div id="pericias" class="chapter">
+  <div class="ch-head"><p class="ch-num">Capítulo II</p><h2 class="ch-title">Perícias</h2><div class="ch-ornament"><div class="ch-ornament-line rev"></div><span class="ch-ornament-sym">⬟</span><div class="ch-ornament-line"></div></div></div>
+  <div class="arcane-quote"><p>"Tudo pode se tornar uma perícia.<br>A excelência nasce do acerto perfeito."</p></div>
+  <div class="scroll"><div class="scroll-title">Origem & Evolução</div><p>Todo aventureiro começa com uma única perícia: <span class="tag tag-gold">Fazer Algo (I)</span>. Ao obter um <strong style="color:var(--gold2)">sucesso crítico — um 6 no dado</strong> — a ação realizada torna-se uma nova perícia registrada na ficha no nível I.</p><p>Cada nível adiciona um dado à rolagem. Apenas o valor mais alto entre todos os dados é considerado.</p></div>
+  <div class="scroll"><div class="scroll-title">Árvore de Progressão</div><div class="pericia-wrap"><div class="pericia-lvl"><span class="p-lvl-tag">Nível I</span><div class="p-nodes"><div class="p-node lv1"><div class="p-node-name">Fazer Algo</div><div class="p-node-dice">rola 1d6</div></div></div></div><div class="pericia-lvl"><span class="p-lvl-tag">Nível II</span><div class="p-nodes"><div class="p-node lv2"><div class="p-node-name">Perícia</div><div class="p-node-dice">2d6, maior vale</div></div></div></div><div class="pericia-lvl"><span class="p-lvl-tag">Nível III</span><div class="p-nodes"><div class="p-node lv3"><div class="p-node-name">Perícia</div><div class="p-node-dice">3d6, maior vale</div></div></div></div><div class="pericia-lvl"><span class="p-lvl-tag">Nível IV</span><div class="p-nodes"><div class="p-node lv4"><div class="p-node-name">Perícia</div><div class="p-node-dice">4d6, maior vale</div></div></div></div><div class="pericia-lvl"><span class="p-lvl-tag">Nível V</span><div class="p-nodes"><div class="p-node lv5"><div class="p-node-name">✦ Perícia — Máximo ✦</div><div class="p-node-dice">5d6 — limite absoluto</div></div></div></div></div><p style="font-size:13px;color:rgba(244,234,208,0.45);font-style:italic;margin-top:.5rem;">Duplo 6 em qualquer nível avança para o próximo.</p></div>
+  <div class="chapter-end"><div class="ornament-line"></div><p>✦ A prática forja o mestre ✦</p></div>
+</div>
+
+<!-- ══ STRIKES ══ -->
+<div id="strikes" class="chapter">
+  <div class="ch-head"><p class="ch-num">Capítulo III</p><h2 class="ch-title">Strikes & Dano</h2><div class="ch-ornament"><div class="ch-ornament-line rev"></div><span class="ch-ornament-sym">⬟</span><div class="ch-ornament-line"></div></div></div>
+  <div class="arcane-quote"><p>"Não há pontos de vida. Há cicatrizes.<br>Cada três golpes deixam uma marca permanente."</p></div>
+  <div class="scroll"><div class="scroll-title">O Acúmulo de Feridas</div><p>A cada <strong style="color:var(--gold2)">3 strikes</strong>, o personagem recebe um modificador permanente de <strong style="color:#e08080">−1</strong> em todos os testes.</p></div>
+  <div class="scroll"><div class="scroll-title">Escala de Modificadores</div><div class="strike-grid"><div class="strike-row"><span class="s-lbl">3 strikes</span><div class="s-track"><div class="s-fill s1">seguro</div></div><span class="s-mod s1-c">−1</span></div><div class="strike-row"><span class="s-lbl">6 strikes</span><div class="s-track"><div class="s-fill s2">ferido</div></div><span class="s-mod s2-c">−2</span></div><div class="strike-row"><span class="s-lbl">9 strikes</span><div class="s-track"><div class="s-fill s3">grave</div></div><span class="s-mod s3-c">−3</span></div><div class="strike-row"><span class="s-lbl">12 strikes</span><div class="s-track"><div class="s-fill s4">crítico</div></div><span class="s-mod s4-c">−4</span></div><div class="strike-row"><span class="s-lbl">15 strikes</span><div class="s-track"><div class="s-fill s5">moribundo</div></div><span class="s-mod s5-c">−5</span></div><div class="strike-row"><span class="s-lbl">18 strikes</span><div class="s-track"><div class="s-fill s6">limite</div></div><span class="s-mod s6-c">−6</span></div></div></div>
+  <div class="scroll" style="margin-top:1rem;"><div class="scroll-title">Tipos de Dano</div><div class="dmg-grid"><div class="dmg-card fisico"><p class="dmg-cat c-fis">Físico</p><div class="dmg-row"><span class="dmg-name">Cortante</span><span class="dmg-val">1–3 str</span></div><div class="dmg-row"><span class="dmg-name">Impactante</span><span class="dmg-val">½–2 str</span></div><div class="dmg-row"><span class="dmg-name">Flamejante</span><span class="dmg-val">2–6 str</span></div><p class="dmg-note">Bloqueio/Esquiva/Contra-ataque anula 100% — exceto flamejante: reduz à metade.</p></div><div class="dmg-card balistico"><p class="dmg-cat c-bal">Balístico</p><div class="dmg-row"><span class="dmg-name">Curto alcance</span><span class="dmg-val">1–9 str</span></div><div class="dmg-row"><span class="dmg-name">Médio alcance</span><span class="dmg-val">1–9 str</span></div><div class="dmg-row"><span class="dmg-name">Longo alcance</span><span class="dmg-val">1–9 str</span></div><p class="dmg-note">Dano depende do treinamento e da distância propícia ao alcance da arma.</p></div><div class="dmg-card psico"><p class="dmg-cat c-psi">Psicológico</p><div class="dmg-row"><span class="dmg-name">Abalado</span><span class="dmg-val">RP</span></div><div class="dmg-row"><span class="dmg-name">Confuso</span><span class="dmg-val">RP</span></div><div class="dmg-row"><span class="dmg-name">Paranóico</span><span class="dmg-val">RP</span></div><div class="dmg-row"><span class="dmg-name">Ansioso</span><span class="dmg-val">RP</span></div><p class="dmg-note">Não conta Strikes. Afeta apenas a interpretação.</p></div></div></div>
+  <div class="chapter-end"><div class="ornament-line"></div><p>✦ Cada cicatriz conta uma história ✦</p></div>
+</div>
+
+<!-- ══ SORTE ══ -->
+<div id="sorte" class="chapter">
+  <div class="ch-head"><p class="ch-num">Capítulo IV</p><h2 class="ch-title">Sorte do Protagonista</h2><div class="ch-ornament"><div class="ch-ornament-line rev"></div><span class="ch-ornament-sym">⬟</span><div class="ch-ornament-line"></div></div></div>
+  <div class="arcane-quote"><p>"Heróis não morrem de bala por acaso.<br>Existe algo maior — o destino improvável."</p><small>— Missão Impossível · Uncharted · Indiana Jones</small></div>
+  <div class="scroll"><div class="scroll-title">A Barra de Sorte</div><p>Aplica-se <strong style="color:var(--gold2)">somente a golpes balísticos</strong>. Começa em 100%. Abaixo de 18%: perigo real.</p><p style="margin-top:.5rem;">Golpes Psicológicos ativos descontam <span class="tag tag-blood">−20%</span>. Todo disparo desconta <span class="tag tag-gold">dado × 3%</span>.</p><div class="luck-section" style="margin-top:1.25rem;"><div class="luck-header"><span class="luck-name">Sorte Atual</span><span class="luck-val" id="luck-num">100%</span></div><div class="luck-track"><div class="luck-fill luck-safe" id="luck-fill" style="width:100%;"><span class="luck-fill-txt" id="luck-txt">Seguro</span></div><div class="luck-marker"></div></div></div><div class="luck-controls"><div class="ctrl-row"><span class="ctrl-lbl">Ajustar sorte</span><input type="range" id="sl-luck" min="0" max="100" value="100" step="1"><span style="font-family:'Cinzel',serif;font-size:12px;color:var(--gold);min-width:36px;" id="sl-luck-out">100%</span></div><div class="ctrl-row"><span class="ctrl-lbl">Dado do inimigo (×3%)</span><input type="range" id="sl-atk" min="1" max="6" value="1" step="1"><span style="font-family:'Cinzel',serif;font-size:12px;color:var(--gold);min-width:36px;" id="sl-atk-out">1</span></div><button onclick="applyAtk()" class="roll-btn">Aplicar disparo</button></div></div>
+  <div class="rule-hl"><span class="rule-hl-icon">⚠</span><div class="rule-hl-body"><p class="rule-hl-title">Zona de Perigo</p><p>Abaixo de 18%, se o dado inimigo zerar a barra e o teste falhar — dano grave e ferimento sangrando.</p></div></div>
+  <div class="chapter-end"><div class="ornament-line"></div><p>✦ O destino favorece os audaciosos ✦</p></div>
+</div>
+
+<!-- ══ MORTE ══ -->
+<div id="morte" class="chapter">
+  <div class="ch-head"><p class="ch-num">Capítulo V</p><h2 class="ch-title">Morrendo</h2><div class="ch-ornament"><div class="ch-ornament-line rev"></div><span class="ch-ornament-sym">⬟</span><div class="ch-ornament-line"></div></div></div>
+  <div class="arcane-quote"><p>"Não há retorno além desta margem.<br>A morte é permanente. Irreversível."</p></div>
+  <div class="scroll"><div class="scroll-title">A Condição de Morte</div><p>O personagem entra em estado <span class="tag tag-blood">Morrendo</span> quando o resultado final do dado — após modificadores — resultar em <strong style="color:#e08080">0 ou menos</strong>.</p><p style="margin-top:.6rem;">Tem <strong style="color:var(--gold2)">3 rodadas</strong> para ser estabilizado por um aliado.</p></div>
+  <div class="scroll"><div class="scroll-title">A Contagem Final</div><div class="dying-track"><div class="d-box"><div class="d-round">Gatilho</div><div class="d-state">Resultado ≤ 0</div></div><span class="d-arrow">→</span><div class="d-box"><div class="d-round">Rodada 1</div><div class="d-state">Morrendo<br>consciente</div></div><span class="d-arrow">→</span><div class="d-box"><div class="d-round">Rodada 2</div><div class="d-state">Morrendo<br>fraco</div></div><span class="d-arrow">→</span><div class="d-box"><div class="d-round">Rodada 3</div><div class="d-state">Última<br>chance</div></div><span class="d-arrow">→</span><div class="d-box kill"><div class="d-round">Sem cura</div><div class="d-state">Morto<br>permanente</div></div></div></div>
+  <div class="rule-hl"><span class="rule-hl-icon">☠</span><div class="rule-hl-body"><p class="rule-hl-title">Morte Permanente</p><p>A morte é <strong style="color:#e08080">permanente e irreversível</strong>. Não existe ressurreição.</p></div></div>
+  <div class="chapter-end"><div class="ornament-line"></div><p>✦ Toda lenda tem seu fim ✦</p></div>
+</div>
+
+<!-- ══ PERSONAGEM ══ -->
+<div id="personagem" class="chapter">
+  <div class="ch-head"><p class="ch-num">Capítulo VI</p><h2 class="ch-title">Ficha do Personagem</h2><div class="ch-ornament"><div class="ch-ornament-line rev"></div><span class="ch-ornament-sym">⬟</span><div class="ch-ornament-line"></div></div></div>
+
+  <!-- Nome -->
+  <div class="scroll">
+    <div class="scroll-title">Identidade</div>
+    <input class="char-name-input" id="char-name" type="text" placeholder="Nome do Personagem" maxlength="40">
+  </div>
+
+  <!-- STRIKES -->
+  <div class="scroll">
+    <div class="scroll-title">Strikes</div>
+
+    <div class="strikes-header">
+      <div>
+        <div class="strikes-counter-big" id="strike-count-big">0</div>
+        <div class="strikes-label">strikes acumulados</div>
+      </div>
+      <div class="strikes-modifier-box">
+        <div class="strikes-mod-val safe" id="strike-mod-val">0</div>
+        <div class="strikes-mod-label safe" id="strike-mod-label">sem penalidade</div>
+      </div>
+    </div>
+
+    <!-- pips visuais: 18 máximo mostrado -->
+    <div class="strike-pip-row" id="strike-pips"></div>
+
+    <!-- penalidade no dado -->
+    <div class="penalty-note" id="penalty-note"></div>
+
+    <!-- ferimentos registrados -->
+    <div class="strike-wound-list" id="wound-list"></div>
+
+    <!-- adicionar ferimento -->
+    <div class="add-strike-row">
+      <input class="strike-qty-input" id="wound-qty" type="number" min="1" max="18" value="1" placeholder="qtd">
+      <input class="strike-desc-input" id="wound-desc" type="text" placeholder="Descreva o ferimento..." maxlength="60">
+      <button class="add-btn" onclick="addWound()">+ Adicionar</button>
+    </div>
+  </div>
+
+  <!-- PERICIAS -->
+  <div class="scroll">
+    <div class="scroll-title">Perícias</div>
+    <p style="font-size:14px;color:rgba(244,234,208,0.5);font-style:italic;margin-bottom:1rem;">Role cada perícia. Um <strong style="color:var(--gold2)">6</strong> em Fazer Algo revela uma nova habilidade. Dois <strong style="color:var(--gold2)">6s</strong> simultâneos avançam de nível.</p>
+    <div class="skill-list" id="skill-list"></div>
+  </div>
+
+  <!-- MOCHILA -->
+  <div class="scroll">
+    <div class="scroll-title">Mochila</div>
+    <p style="font-size:14px;color:rgba(244,234,208,0.5);font-style:italic;margin-bottom:.75rem;">O que você carrega nesta jornada.</p>
+    <div class="bag-grid" id="bag-grid"></div>
+    <div class="add-bag-row">
+      <input class="bag-input" id="bag-input" type="text" placeholder="Adicionar item à mochila..." maxlength="50">
+      <button class="add-btn" onclick="addBagItem()">+ Guardar</button>
+    </div>
+  </div>
+
+  <div class="chapter-end"><div class="ornament-line"></div><p>✦ A jornada começa com um único dado ✦</p></div>
+</div>
+
+</div>
+</div>
+
+<!-- Modal nova perícia -->
+<div class="modal-overlay hidden" id="modal-new">
+  <div class="modal-box">
+    <div class="modal-critical-star">✦</div>
+    <p class="modal-title">Crítico!</p>
+    <p class="modal-sub">Nova perícia desbloqueada</p>
+    <p style="font-size:15px;color:rgba(244,234,208,0.7);text-align:center;margin-bottom:1.25rem;line-height:1.7;">A ação foi executada com maestria.<br>Que nome carrega esta habilidade?</p>
+    <input class="modal-input" id="modal-new-input" type="text" placeholder="ex: Atirar, Correr, Intimidar..." maxlength="30">
+    <div class="modal-btns">
+      <button class="modal-btn-cancel" onclick="closeModalNew()">Cancelar</button>
+      <button class="modal-btn-confirm" onclick="confirmNewSkill()">Inscrever na Ficha</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal upgrade -->
+<div class="modal-overlay hidden" id="modal-up">
+  <div class="modal-box">
+    <div class="modal-critical-star" style="font-size:36px;">✦✦</div>
+    <p class="modal-title">Duplo Crítico!</p>
+    <p class="modal-sub">Perícia avança de nível</p>
+    <p class="modal-upgrade-badge" id="modal-up-name"></p>
+    <p class="modal-upgrade-text" id="modal-up-text"></p>
+    <div class="modal-btns" style="justify-content:center;">
+      <button class="modal-btn-confirm" onclick="closeModalUp()">Que assim seja</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const LEVEL_LABELS = ['','Nível I','Nível II','Nível III','Nível IV','Nível V — Máximo'];
+
+/* ══ NAV ══ */
+function show(id, btn) {
+  document.querySelectorAll('.chapter').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ══ SORTE ══ */
+const slLuck = document.getElementById('sl-luck');
+const slAtk  = document.getElementById('sl-atk');
+let luck = 100;
+function updateLuck(val) {
+  luck = Math.max(0, Math.min(100, val));
+  slLuck.value = luck;
+  document.getElementById('sl-luck-out').textContent = luck + '%';
+  document.getElementById('luck-num').textContent = luck + '%';
+  const fill = document.getElementById('luck-fill');
+  const txt  = document.getElementById('luck-txt');
+  fill.style.width = luck + '%';
+  fill.className = 'luck-fill ' + (luck > 40 ? 'luck-safe' : luck > 18 ? 'luck-warn' : 'luck-danger');
+  txt.textContent = luck > 40 ? 'Seguro' : luck > 18 ? 'Cuidado' : luck > 0 ? 'PERIGO' : 'Eliminado';
+}
+slLuck.addEventListener('input', () => updateLuck(parseInt(slLuck.value)));
+slAtk.addEventListener('input',  () => { document.getElementById('sl-atk-out').textContent = slAtk.value; });
+function applyAtk() { updateLuck(luck - parseInt(slAtk.value) * 3); }
+
+/* ══ STRIKES ══ */
+let totalStrikes = 0;
+let wounds = [];
+let lastBestDie = 0; // melhor dado rolado em qualquer perícia
+
+function getStrikePenalty(n) { return Math.floor(n / 3); }
+
+function renderStrikes() {
+  const pen = getStrikePenalty(totalStrikes);
+  document.getElementById('strike-count-big').textContent = totalStrikes;
+
+  const modVal   = document.getElementById('strike-mod-val');
+  const modLabel = document.getElementById('strike-mod-label');
+  if (pen === 0) {
+    modVal.textContent = '0'; modVal.className = 'strikes-mod-val safe';
+    modLabel.textContent = 'sem penalidade'; modLabel.className = 'strikes-mod-label safe';
+  } else {
+    modVal.textContent = '−' + pen; modVal.className = 'strikes-mod-val';
+    const states = ['','ferido','grave','crítico','moribundo','no limite','eliminado'];
+    modLabel.textContent = states[Math.min(pen, 6)] || 'no limite'; modLabel.className = 'strikes-mod-label';
+  }
+
+  // pips — mostrar até 18
+  const pipRow = document.getElementById('strike-pips');
+  pipRow.innerHTML = '';
+  const show = Math.min(totalStrikes + 3, 18);
+  for (let i = 1; i <= show; i++) {
+    const pip = document.createElement('div');
+    pip.className = 'strike-pip' + (i <= totalStrikes ? ' filled' : '') + (i % 3 === 0 ? ' three-mark' : '');
+    pip.textContent = i <= totalStrikes ? '✕' : '';
+    pipRow.appendChild(pip);
+  }
+
+  // nota de penalidade no dado
+  const penNote = document.getElementById('penalty-note');
+  if (pen > 0 && lastBestDie > 0) {
+    const adjusted = Math.max(1, lastBestDie - pen);
+    penNote.textContent = 'Melhor dado rolado: ' + lastBestDie + '  →  com penalidade (−' + pen + '): ' + adjusted;
+  } else if (pen > 0) {
+    penNote.textContent = 'Penalidade ativa: −' + pen + ' em todos os resultados.';
+  } else {
+    penNote.textContent = '';
+  }
+
+  // lista de ferimentos
+  const wList = document.getElementById('wound-list');
+  wList.innerHTML = '';
+  if (wounds.length === 0) {
+    const emp = document.createElement('p');
+    emp.style.cssText = 'font-style:italic;font-size:14px;color:rgba(201,149,42,0.3);';
+    emp.textContent = 'Nenhum ferimento registrado.';
+    wList.appendChild(emp);
+    return;
+  }
+  wounds.forEach((w, idx) => {
+    const row = document.createElement('div');
+    row.className = 'strike-wound-item';
+    row.innerHTML = `
+      <span class="wound-count-badge">${w.qty} str</span>
+      <span class="wound-desc">${w.desc}</span>
+      <button class="wound-remove" onclick="removeWound(${idx})" title="Remover">✕</button>
+    `;
+    wList.appendChild(row);
+  });
+}
+
+function addWound() {
+  const qty  = parseInt(document.getElementById('wound-qty').value) || 1;
+  const desc = document.getElementById('wound-desc').value.trim();
+  if (!desc) { showToast('Descreva o ferimento!'); return; }
+  wounds.push({ qty: qty, desc: desc });
+  totalStrikes += qty;
+  document.getElementById('wound-qty').value = 1;
+  document.getElementById('wound-desc').value = '';
+  renderStrikes();
+  updatePenaltyOnSkills();
+  showToast('✕ ' + qty + ' strike(s) registrado(s)');
+}
+
+function removeWound(idx) {
+  totalStrikes -= wounds[idx].qty;
+  if (totalStrikes < 0) totalStrikes = 0;
+  wounds.splice(idx, 1);
+  renderStrikes();
+  updatePenaltyOnSkills();
+}
+
+/* ══ SKILLS ══ */
+let skills = [{ id:'fazer-algo', name:'Fazer Algo', level:1, rolling:false }];
+let pendingNewSkill = false;
+let pendingUpgradeId = null;
+
+function renderSkills() {
+  const list = document.getElementById('skill-list');
+  list.innerHTML = '';
+  skills.forEach(sk => {
+    const card = document.createElement('div');
+    card.className = 'skill-card skill-lv' + sk.level;
+    card.id = 'card-' + sk.id;
+    const isMax = sk.level >= 5;
+    let diceHTML = '';
+    for (let i = 0; i < sk.level; i++) {
+      diceHTML += `<div class="die-face" id="die-${sk.id}-${i}">—</div>`;
+    }
+    card.innerHTML = `
+      <div class="skill-card-header">
+        <span class="skill-card-name">${sk.name}</span>
+        <span class="lvl-badge ${isMax ? 'max' : ''}">${LEVEL_LABELS[sk.level]}</span>
+      </div>
+      <div class="skill-dice-row" id="dice-row-${sk.id}">${diceHTML}</div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <button class="roll-btn" id="btn-${sk.id}" onclick="rollSkill('${sk.id}')">Rolar ${sk.level}d6</button>
+        <span class="skill-result result-normal" id="result-${sk.id}"></span>
+      </div>
+      <p class="xp-note" id="note-${sk.id}"></p>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function updatePenaltyOnSkills() {
+  renderStrikes();
+}
+
+function rollSkill(id) {
+  const sk = skills.find(s => s.id === id);
+  if (!sk || sk.rolling) return;
+  sk.rolling = true;
+  const btn = document.getElementById('btn-' + id);
+  btn.disabled = true;
+  const frames = 14;
+  let frame = 0;
+  const faces = ['1','2','3','4','5','6'];
+  const interval = setInterval(() => {
+    for (let i = 0; i < sk.level; i++) {
+      const el = document.getElementById('die-' + id + '-' + i);
+      if (el) { el.textContent = faces[Math.floor(Math.random()*6)]; el.className = 'die-face rolling'; }
+    }
+    frame++;
+    if (frame >= frames) { clearInterval(interval); finalizeRoll(id); }
+  }, 60);
+}
+
+function finalizeRoll(id) {
+  const sk = skills.find(s => s.id === id);
+  const results = [];
+  for (let i = 0; i < sk.level; i++) results.push(Math.floor(Math.random()*6)+1);
+  const best = Math.max(...results);
+  const countSixes = results.filter(r => r === 6).length;
+
+  // atualiza melhor dado global
+  if (best > lastBestDie) {
+    lastBestDie = best;
+    renderStrikes();
+  }
+
+  for (let i = 0; i < sk.level; i++) {
+    const el = document.getElementById('die-' + id + '-' + i);
+    if (el) {
+      el.textContent = results[i];
+      el.className = results[i] === 6 ? 'die-face critical' : results[i] === best ? 'die-face highlight' : 'die-face';
+    }
+  }
+
+  const pen = getStrikePenalty(totalStrikes);
+  const adjustedBest = Math.max(1, best - pen);
+
+  const resultEl = document.getElementById('result-' + id);
+  const noteEl   = document.getElementById('note-' + id);
+  const btn      = document.getElementById('btn-' + id);
+  sk.rolling = false;
+  btn.disabled = false;
+
+  /* Fazer Algo nível 1 + 6 → nova perícia (nível I) */
+  if (id === 'fazer-algo' && sk.level === 1 && best === 6) {
+    resultEl.textContent = 'Crítico! — ' + best + (pen > 0 ? ' (ajustado: ' + adjustedBest + ')' : '');
+    resultEl.className = 'skill-result result-critical';
+    noteEl.textContent = 'Maestria revelada! Escolha o nome da nova perícia.';
+    setTimeout(() => openModalNew(), 600);
+    return;
+  }
+
+  /* duplo 6 → sobe nível */
+  if (id !== 'fazer-algo' && countSixes >= 2) {
+    if (sk.level < 5) {
+      resultEl.textContent = 'Duplo Crítico! — ' + best;
+      resultEl.className = 'skill-result result-double';
+      noteEl.textContent = 'A perícia evoluiu!';
+      setTimeout(() => openModalUp(id), 600);
+    } else {
+      resultEl.textContent = 'Máximo absoluto! — ' + best;
+      resultEl.className = 'skill-result result-double';
+      noteEl.textContent = 'Você já atingiu o limite. Lendário.';
+    }
+    return;
+  }
+
+  /* 6 único em perícia nível 1 (não é fazer-algo) → sobe para nível 2 */
+  if (id !== 'fazer-algo' && sk.level === 1 && best === 6) {
+    resultEl.textContent = 'Crítico! — ' + best;
+    resultEl.className = 'skill-result result-critical';
+    noteEl.textContent = 'Perícia evolui para Nível II!';
+    setTimeout(() => openModalUp(id), 600);
+    return;
+  }
+
+  /* Normal */
+  const label = pen > 0 ? best + ' → ajustado: ' + adjustedBest : '' + best;
+  if (best >= 5) { resultEl.textContent = 'Bom resultado — ' + label; resultEl.className = 'skill-result result-good'; }
+  else if (best >= 3) { resultEl.textContent = 'Resultado — ' + label; resultEl.className = 'skill-result result-normal'; }
+  else { resultEl.textContent = 'Falha — ' + label; resultEl.className = 'skill-result result-normal'; }
+  noteEl.textContent = pen > 0 ? '−' + pen + ' de penalidade por strikes aplicada.' : '';
+}
+
+function openModalNew() {
+  document.getElementById('modal-new-input').value = '';
+  document.getElementById('modal-new').classList.remove('hidden');
+  setTimeout(() => document.getElementById('modal-new-input').focus(), 100);
+}
+function closeModalNew() { document.getElementById('modal-new').classList.add('hidden'); }
+function confirmNewSkill() {
+  const raw = document.getElementById('modal-new-input').value.trim();
+  if (!raw) { showToast('Escreva o nome da perícia!'); return; }
+  const name = raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase();
+  // Todas as perícias (exceto Fazer Algo) começam no nível 2
+  skills.push({ id: 'skill-' + Date.now(), name: name, level: 2, rolling: false });
+  closeModalNew();
+  renderSkills();
+  showToast('✦ ' + name + ' inscrita na ficha — Nível II ✦');
+}
+
+function openModalUp(id) {
+  pendingUpgradeId = id;
+  const sk = skills.find(s => s.id === id);
+  const next = sk.level + 1;
+  document.getElementById('modal-up-name').textContent = sk.name;
+  document.getElementById('modal-up-text').textContent =
+    'De ' + LEVEL_LABELS[sk.level] + ' para ' + LEVEL_LABELS[next] + '.\nAgora rola ' + next + 'd6 — vale sempre o maior.';
+  document.getElementById('modal-up').classList.remove('hidden');
+}
+function closeModalUp() {
+  const sk = skills.find(s => s.id === pendingUpgradeId);
+  if (sk && sk.level < 5) { sk.level++; }
+  document.getElementById('modal-up').classList.add('hidden');
+  renderSkills();
+  if (sk) showToast('✦ ' + sk.name + ' agora é ' + LEVEL_LABELS[sk.level] + ' ✦');
+  pendingUpgradeId = null;
+}
+
+/* ══ MOCHILA ══ */
+let bagItems = [];
+function renderBag() {
+  const grid = document.getElementById('bag-grid');
+  grid.innerHTML = '';
+  if (bagItems.length === 0) {
+    const emp = document.createElement('p');
+    emp.className = 'bag-empty';
+    emp.textContent = 'A mochila está vazia.';
+    grid.appendChild(emp);
+    return;
+  }
+  bagItems.forEach((item, idx) => {
+    const row = document.createElement('div');
+    row.className = 'bag-item';
+    row.innerHTML = `
+      <span class="bag-item-num">${idx + 1}.</span>
+      <span class="bag-item-name">${item}</span>
+      <button class="bag-remove" onclick="removeBagItem(${idx})" title="Remover">✕</button>
+    `;
+    grid.appendChild(row);
+  });
+}
+function addBagItem() {
+  const val = document.getElementById('bag-input').value.trim();
+  if (!val) { showToast('Escreva o nome do item!'); return; }
+  bagItems.push(val);
+  document.getElementById('bag-input').value = '';
+  renderBag();
+}
+function removeBagItem(idx) {
+  bagItems.splice(idx, 1);
+  renderBag();
+}
+
+/* ══ TOAST ══ */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ══ ENTER nos inputs ══ */
+document.getElementById('modal-new-input').addEventListener('keydown', e => { if (e.key === 'Enter') confirmNewSkill(); });
+document.getElementById('bag-input').addEventListener('keydown', e => { if (e.key === 'Enter') addBagItem(); });
+document.getElementById('wound-desc').addEventListener('keydown', e => { if (e.key === 'Enter') addWound(); });
+
+/* ══ INIT ══ */
+renderSkills();
+renderStrikes();
+renderBag();
+</script>
+</body>
+</html>
